@@ -7,7 +7,14 @@ query user($username: String!) {
         username
         email
         bookCount
-        savedbooks
+        savedbooks {
+            bookId
+            authors
+            description
+            title
+            image
+            link
+        }
     }
 }
 `;
