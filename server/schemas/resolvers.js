@@ -4,12 +4,19 @@ const { signToken } = require('../utils/auth');
 
 const resolvers = {
     Query: {
-        me: async () => {
-            return User.find().populate('book');
+        me: async (parent, args, context) => {
+            if (context.user) {
+                const user = await User.findOne({})
+                    .select('-__v -password')
+                    .populate('books')
+
+                return user;
+            }
+
+            throw new AuthenticationError('Not logged in')
+
         },
-        user: async (parent, { username }) => {
-            return User.findOne({ username }).populate('book');
-        },
+
     },
 
 
@@ -37,28 +44,31 @@ const resolvers = {
             return { token, user };
         },
 
-        saveBook: async (parent, { input }, context) => {
+        saveBook: async (parent, args, context) => {
             if (context.user) {
-                return User.findOneAndUpdate(
+
+                const updateUser = await User.findOneAndUpdate(
                     { _id: context.user_id },
                     {
-                        $addToSet: { savedbooks: input },
+                        $addToSet: { savedbooks: args.input },
                     },
                     {
                         new: true,
                     }
                 );
+                return updateUser;
             }
             throw new AuthenticationError('You need to be logged in!');
         },
 
-        removeBook: async (parent, { input }, context) => {
+        removeBook: async (parent, args, context) => {
             if (context.user) {
-                return User.findOneAndUpdate(
+                const updateUser = await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $pull: { savedbooks: input } },
+                    { $pull: { savedbooks: args.bookId } },
                     { new: true }
                 );
+                return updateUser
             }
             throw new AuthenticationError('You need to be logged in!');
         },
