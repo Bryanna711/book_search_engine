@@ -5,7 +5,7 @@ import { Form, Button, Alert } from 'react-bootstrap';
 import Auth from '../utils/auth';
 import { useMutation } from '@apollo/client';
 import { LOGIN_USER } from '../utils/mutations';
-import { SchemaError } from 'graphql-tools';
+// import { SchemaError } from 'graphql-tools';
 
 const LoginForm = () => {
   const [userFormData, setUserFormData] = useState({ email: '', password: '' });
