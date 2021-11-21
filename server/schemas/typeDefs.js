@@ -6,7 +6,7 @@ type User {
     _id: ID!
     username: String!
     email: String!
-    password: String
+    password: String!
     bookCount : Int
     saveBooks : [Book]
     }
