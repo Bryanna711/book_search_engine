@@ -1,30 +1,28 @@
-const jwt = require('jsonwebtoken');
+import decode from 'jwt-decode';
 
-const secret = 'mysecretssshhhhhhh';
-const expiration = '2h';
+class AuthService {
+  getProfile() {
+    return decode(this.getToken());
+  }
 
-module.exports = {
-  authMiddleware: function ({ req }) {
-    let token = req.query.token || req.headers.authorization;
-    if (req.headers.authorization) {
-      token = token.split(' ').pop().trim();
-    }
+  loggedIn() {
+    const token = this.getToken();
+    return token ? true : false;
+  }
 
-    if (!token) {
-      return req;
-    }
+  getToken() {
+    return localStorage.getItem('id_token');
+  }
 
-    try {
-      const { data } = jwt.verify(token, secret, { maxAge: expiration });
-      req.user = data;
-    } catch {
-      console.log('Invalid token');
-    }
+  login(idToken) {
+    localStorage.setItem('id_token', idToken);
+    window.location.assign('/');
+  }
 
-    return req;
-  },
-  signToken: function ({ email, name, _id }) {
-    const payload = { email, name, _id };
-    return jwt.sign({ data: payload }, secret, { expiresIn: expiration });
-  },
-};
+  logout() {
+    localStorage.removeItem('id_token');
+    window.location.reload();
+  }
+}
+
+export default new AuthService();
