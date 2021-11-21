@@ -8,7 +8,7 @@ type User {
     email: String!
     password: String!
     bookCount : Int
-    saveBooks : [Book]
+    savedBooks : [Book]
     }
 
 type Book {
